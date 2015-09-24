@@ -7,6 +7,11 @@ class RuleModel {
         this._renderTestLink = data.renderTestLink;
         this._testUrl = data.testUrl;
         this._filename = data.filename;
+        this._group = data.group;
+
+        if (!data.group) {
+            console.log('Warning: %s is undefined', data.name);
+        }
     }
 
     getName() {
@@ -37,6 +42,10 @@ class RuleModel {
         return this._filename;
     }
 
+    getGroup() {
+        return this._group;
+    }
+
     toJSON() {
         return {
             name: this._name,
@@ -45,7 +54,8 @@ class RuleModel {
             sourceUrl: this._sourceUrl,
             renderTestLink: this._renderTestLink,
             testUrl: this._testUrl,
-            filename: this._filename
+            filename: this._filename,
+            group: this._group
         };
     }
 }

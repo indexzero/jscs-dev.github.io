@@ -12,9 +12,11 @@ import UserModel from '../models/UserModel'
 import BadgeModel from '../models/BadgeModel'
 
 const jscsRoot = __dirname + '/../../jscs';
+const packageInfo = require(jscsRoot + '/package.json');
+const groupInfo = require(jscsRoot + '/grouping.json');
+const groupLookup = buildGroupLookup(groupInfo);
 
 export default () => {
-    var packageInfo = require(jscsRoot + '/package.json');
     return vow.all([
         getAvailableRules().then(function(ruleFilenames) {
             return vow.all(ruleFilenames.map(buildRuleInfo));
@@ -87,9 +89,20 @@ function buildRuleInfo(rulePath) {
             sourceUrl: fileUrl,
             renderTestLink: hasTestFile,
             testUrl: testUrl,
-            filename: filename
+            filename: filename,
+            group: groupLookup[optionName]
         });
     });
+}
+
+function buildGroupLookup(groupInfo) {
+    return Object.keys(groupInfo).reduce(function (acc, group) {
+        groupInfo[group].forEach(function (rule) {
+            acc[rule] = group;
+        });
+
+        return acc;
+    }, {});
 }
 
 function buildRuleTestFilePath(ruleFilename) {
